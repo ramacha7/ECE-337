@@ -24,6 +24,8 @@ typedef struct{
   logic                   test_cin;
 } testVector;
 
+testVector tb_test_cases [];
+
 // Declare test bench 'navigation' signals
 integer tb_test_case_num;
 string  tb_test_case;
@@ -36,7 +38,6 @@ logic [MAX_SUM_BIT:0]  tb_expected_sum;
 logic                  tb_expected_overflow;
 
 // Declare the unpacked/dynamically sized test-vector array
-testVector tb_test_cases [];
 
 // Declare Design Under Test (DUT) portmap signals
 logic [MAX_INPUT_BIT:0] tb_a;
@@ -53,7 +54,7 @@ adder_16bit DUT (.a(tb_a), .b(tb_b), .carry_in(tb_carry_in), .sum(tb_sum), .over
 initial begin
   // Create the test-vector array with enough slots for test cases
   // STUDENT TODO: Update the array declaration to have enough slots
-  tb_test_cases = new[1];
+  tb_test_cases = new[5];
 
   // First Test Case/Test-Vector
   tb_test_cases[0].test_name = "Zeros Check";
@@ -62,6 +63,30 @@ initial begin
   tb_test_cases[0].test_cin  = 1'b0;
 
   // STUDENT TODO: Add your additional test cases here after increasing the array size
+  // Second Test Case/Test-Vector
+  tb_test_cases[1].test_name = "A large, B small";
+  tb_test_cases[1].test_a    = 16'd58000;
+  tb_test_cases[1].test_b    = 16'd10;
+  tb_test_cases[1].test_cin  = 1'b0;
+
+  // Third Test Case/Test-Vector
+  tb_test_cases[2].test_name = "B large, A small";
+  tb_test_cases[2].test_a    = 16'd15;
+  tb_test_cases[2].test_b    = 16'd45000;
+  tb_test_cases[2].test_cin  = 1'b1;
+
+  // Fourth Test Case/Test-Vector
+  tb_test_cases[3].test_name = "A large, B large";
+  tb_test_cases[3].test_a    = 16'd43256;
+  tb_test_cases[3].test_b    = 16'd45217;
+  tb_test_cases[3].test_cin  = 1'b0;
+
+  // Fifth Test Case/Test-Vector
+  tb_test_cases[4].test_name = "A small, B small";
+  tb_test_cases[4].test_a    = 16'd24;
+  tb_test_cases[4].test_b    = 16'd13;
+  tb_test_cases[4].test_cin  = 1'b1;
+
 end
 
 // Handle expected results bit-slice mappings
