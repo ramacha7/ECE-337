@@ -16,12 +16,12 @@ include /home/ecegrid/a/ece337/Course_Prod/course_make_vars
 # (do not include the source folder in the name)
 # NOTE: YOU WILL NEED TO SET THIS VARIABLE'S VALUE WHEN WORKING WITH HEIRARCHICAL DESIGNS
 # AND THE AUTOMATED GRADING SYSTEM
-COMPONENT_FILES	:= 
+COMPONENT_FILES	:= apb_slave.sv rcv_block.sv timer.sv first_flex_counter.sv second_flex_counter.sv sr_9bit.sv flex_stp_sr.sv rx_data_buff.sv rcu.sv start_bit_det.sv stop_bit_chk.sv flex_counter.sv 
 
 # Specify the name of the top level file (do not include the source folder in the name)
 # NOTE: YOU WILL NEED TO SET THIS VARIABLE'S VALUE WHEN WORKING WITH HEIRARCHICAL DESIGNS
 # AND THE AUTOMATED GRADING SYSTEM
-TOP_LEVEL_FILE	:= 
+TOP_LEVEL_FILE	:= apb_uart_rx.sv 
 
 # Specify the filepath of the test bench you want to use (ie. tb_top_level.sv)
 # (do not include the source folder in the name)
@@ -269,15 +269,15 @@ tbsim_%_mapped: $(M_WORK_LIB)/% $(M_WORK_LIB)/tb_%
 # Set the default value of the clock name and clock period to an empty string so that clock timing will
 # only be activated in the SYN_CMDS definition if they were overwritten at invocation
 CLOCK_NAME 		:=
-CLOCK_PERIOD	:=
+CLOCK_PERIOD	:= 9
 
 # Set the default value of the source files for sub modules to be an empty string so that
 # it will only be used if overwritten at invocation
-DEP_SUB_FILES :=
+DEP_SUB_FILES := apb_slave.sv rcv_block.sv timer.sv first_flex_counter.sv second_flex_counter.sv sr_9bit.sv flex_stp_sr.sv rx_data_buff.sv rcu.sv start_bit_det.sv stop_bit_chk.sv flex_counter.sv 
 
 # Set the default value of the main source file to an empty string since it will be
 # overwritten by each rule where it is used anyways
-MAIN_FILE :=
+MAIN_FILE := apb_uart_rx.sv
 
 # Set the module's name to always be the same as the basename of the file
 # (a.k.a. the file name without the file extension)

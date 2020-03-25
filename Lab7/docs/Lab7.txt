@@ -1,0 +1,9 @@
+Question 1: Data ready should be asserted for a minimum of 2 clock cycles
+
+Question 2: The data must be valid for minimum of 1 clock cycle of data ready
+
+Question 3: All the 3 filtered images are different in the sense that the pixels in the input file are being manipulated based on the type of the filter function. This is similar to the design we had created as it basically performs operations that averages the data samples sent in and thus acting as a high pass filter.
+
+Question 4: All of the File IO functions are called with a '$' sign before them.
+
+Question 5:It can have either %c or %s as the format specifiers.

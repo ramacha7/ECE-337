@@ -1,4 +1,4 @@
-// $Id: $
+// $Id: $mg117
 // File name:   tb_stp_sr_4_msb.sv
 // Created:     9/14/2018
 // Author:      Tim Pritchett
@@ -191,7 +191,7 @@ module tb_stp_sr_4_msb();
     // Define the expected result
     tb_expected_ouput = '0;
 
-    // Contiguously stream enough zeros to fill the shift register
+// Contiguously stream enough zeros to fill the shift register
     send_stream(tb_test_data);
 
     // Check the result of the full stream

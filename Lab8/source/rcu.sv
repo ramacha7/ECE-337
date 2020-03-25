@@ -7,7 +7,7 @@
 // Description: Receiver Control Unit
 
 
-module rcu (input wire clk, input wire n_rst, input wire new_packet_detected, input wire packet_done, input wire framing_error, output reg sbc_clear, output reg sbc_enable, output reg load_buffer, output reg enable_timer);
+module rcu (input wire clk, input wire n_rst, input wire new_packet_detected, input wire packet_done, input wire framing_error, output reg sbc_clear, output reg sbc_enable, output reg load_buffer, output reg enable_timer, input reg[3:0] data_size, input reg[13:0] bit_period);
 
     typedef enum logic [2:0] {IDLE, NEW_PACKET, PACKET_DONE,CHECK_ERROR,LOAD_BUFFER} state_type;
 
@@ -16,7 +16,6 @@ module rcu (input wire clk, input wire n_rst, input wire new_packet_detected, in
     reg next_sbc_clear;
     reg next_sbc_enable;
     reg next_load_buffer;
-    //reg next_load_buffer1;
     reg next_enable_timer;
 
     always_ff @ (posedge clk, negedge n_rst) begin
@@ -36,26 +35,16 @@ module rcu (input wire clk, input wire n_rst, input wire new_packet_detected, in
         end
     end
 
-/*    always_ff @(posedge clk, negedge n_rst) begin
-        if(!n_rst) begin
-            next_load_buffer <= 0;
-        end
-        else begin
-            next_load_buffer <= next_load_buffer1;
-        end
-    end
-*/
 
     always_comb begin
         next_state = state;
         next_sbc_clear = sbc_clear;
         next_sbc_enable = sbc_enable;
         next_load_buffer = load_buffer;
-        //next_load_buffer1 = 0;
         next_enable_timer = enable_timer;
         case(state)
             IDLE: begin
-                if (new_packet_detected == 1) begin
+                if(new_packet_detected == 1) begin
                     next_state = NEW_PACKET;
                     next_sbc_clear = 1;
                     next_enable_timer = 1;
@@ -79,7 +68,6 @@ module rcu (input wire clk, input wire n_rst, input wire new_packet_detected, in
                     next_enable_timer = 0;
                     next_sbc_enable = 1;
                     next_load_buffer = 0;
-
                 end
 
                 else begin

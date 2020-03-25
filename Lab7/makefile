@@ -43,7 +43,7 @@ M_WORK_LIB := mapped_work
 
 LIB_CREATE	:= vlib
 COMPILE 		:= vlog -sv
-SIMULATE		:= vsim -Lf $(LABS_IP_LIB) -L $(GATE_LIB) -L $(GOLD_LIB) +no_glitch_msg -coverage -novopt
+SIMULATE		:= vsim -Lf $(LABS_IP_LIB) -L $(GATE_LIB) -L $(GOLD_LIB) +no_glitch_msg -coverage 
 DC_SHELL		:= dc_shell-t
 
 ##############################################################################
@@ -295,7 +295,7 @@ MOD_NAME := $(basename $(MAIN_FILE))
 # Note: The CLOCK_NAME variable override below will need to be set to the actual
 # clock signal name for sequential/clocked designs.
 # Also have to specify to run with the c shell to force it to use the course config (.cshrc) and call course scripts 
-mapped/$(TOP_MODULE).v: SHELL := /usr/local/bin/tcsh
+mapped/$(TOP_MODULE).v: SHELL := /usr/bin/tcsh
 $(addsuffix .v, $(addprefix mapped/, $(TOP_MODULE))): mapped/%.v : source/%.sv $(addprefix source/,$(COMPONENT_FILES))
 	@echo "Synthesizing design: $@\n"
 	@$(MAKE) --no-print-directory syn_mapped MAIN_FILE='$(notdir $<)' DEP_SUB_FILES='$(COMPONENT_FILES)' CLOCK_NAME='clk' CLOCK_PERIOD='9' > $(notdir $(basename $@)).log
@@ -313,7 +313,7 @@ $(addsuffix .v, $(addprefix mapped/, $(TOP_MODULE))): mapped/%.v : source/%.sv $
 # dependencies and thus will resynthesize if any of them are newer as well.
 # It will pass on any of the related variables values if they were overwritten at runtime.
 # Also have to specify to run with the c shell to force it to use the course config (.cshrc) and call course scripts 
-mapped/%.v: SHELL := /usr/local/bin/tcsh
+mapped/%.v: SHELL := /usr/bin/tcsh
 mapped/%.v: source/%.sv $(addprefix source/,$(DEP_SUB_FILES))
 	@echo "Synthesizing and Compiling design: $@\n"
 	@$(MAKE) --no-print-directory syn_mapped MAIN_FILE='$*.sv' DEP_SUB_FILES='$(DEP_SUB_FILES)' CLOCK_NAME='$(CLOCK_NAME)' CLOCK_PERIOD='$(CLOCK_PERIOD)' > $*.log

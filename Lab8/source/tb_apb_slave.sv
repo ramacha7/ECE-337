@@ -53,6 +53,7 @@ integer  tb_test_case_num;
 logic [DATA_MAX_BIT:0] tb_test_data;
 string                 tb_check_tag;
 logic [13:0]           tb_test_bit_period;
+logic [3:0]            tb_test_data_size;
 logic                  tb_mismatch;
 logic                  tb_check;
 
@@ -327,6 +328,7 @@ initial begin
   tb_expected_data_read  = 1'b0;
   tb_expected_bit_period = RESET_BIT_PERIOD;
   tb_expected_data_size  = RESET_DATA_SIZE;
+  //tb_expected_data = '0;
   check_outputs("after DUT reset");
 
   // Set all UART inputs back to inactive values
@@ -357,6 +359,7 @@ initial begin
   tb_expected_data_read  = 1'b0;
   tb_expected_bit_period = tb_test_bit_period;
   tb_expected_data_size  = RESET_DATA_SIZE;
+  //tb_expected_data = '0;;
   check_outputs("after attempting to configure a 10-cycle bit period");
 
 
@@ -383,6 +386,7 @@ initial begin
   tb_expected_data_read  = 1'b0;
   tb_expected_bit_period = tb_test_bit_period;
   tb_expected_data_size  = RESET_DATA_SIZE;
+  //tb_expected_data = '0;;
   check_outputs("after attempting to configure a 1000-cycle bit period");
 
   // Enqueue the CR Reads
@@ -393,9 +397,137 @@ initial begin
   execute_transactions(2);
 
   // Student TODO: Add more test cases here
+  /////////////////////////////////////////////////////////////////////////////////
+  ///
+  ///   Test case: Reading from rx_data buffer to pr data
+  ///
+  ///////////////////////////////////////////////////////////////////////////////
   // Update Navigation Info
-  tb_test_case     = "Need More Tests!";
+  tb_test_case     = "Reading Data Buffer!";
   tb_test_case_num = tb_test_case_num + 1;
+
+  reset_dut();
+
+//  tb_test_bit_period = 14'd10;
+  //tb_test_data = 8'b01010101;
+  tb_rx_data = 8'b01010101;
+
+  enqueue_transaction(1'b1,1'b0,3'd6,tb_rx_data,1'b0);
+
+  tb_expected_data_read = 1'b1;
+  tb_expected_bit_period = RESET_BIT_PERIOD;
+  tb_expected_data_size = RESET_DATA_SIZE;
+
+
+  //Run the read transaction
+  execute_transactions(1);
+
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  ///
+  ///   Test case: Reading from error status register to pr data
+  ///
+  ///////////////////////////////////////////////////////////////////////////////
+  // Update Navigation Info
+  tb_test_case     = "Reading Error Status Register!";
+  tb_test_case_num = tb_test_case_num + 1;
+
+  reset_dut();
+
+  tb_overrun_error = 1'b1;
+  tb_framing_error = 1'b0;
+  enqueue_transaction(1'b1,1'b0,ADDR_ERROR_SR,8'd2,1'b0);
+
+  tb_expected_data_read = 1'b0;
+  tb_expected_bit_period = RESET_BIT_PERIOD;
+  tb_expected_data_size = RESET_DATA_SIZE;
+
+  //Run the read transaction
+  execute_transactions(1);
+
+  /////////////////////////////////////////////////////////////////////////////////
+  ///
+  ///   Test case: Reading from data status register to pr data
+  ///
+  ///////////////////////////////////////////////////////////////////////////////
+  // Update Navigation Info
+  tb_test_case     = "Reading Error Status Register!";
+  tb_test_case_num = tb_test_case_num + 1;
+
+  reset_dut();
+
+  tb_data_ready = 1'b1;
+  enqueue_transaction(1'b1,1'b0,ADDR_DATA_SR,{7'd0,tb_data_ready},1'b0);
+
+  //Run the read transaction
+  execute_transactions(1);
+
+   //*****************************************************************************
+  // Test Case: Configure the Data Size Settings
+  //*****************************************************************************
+  // Update Navigation Info
+  tb_test_case     = "Read from Data Size Config Register after setting it";
+  tb_test_case_num = tb_test_case_num + 1;
+
+  // Reset the DUT to isolate from prior to isolate from prior test case
+  reset_dut();
+  
+  // Enque the needed transactions (Overall period of 1000 clocks)
+  tb_test_data_size = 4'd5;
+  // Enqueue the CR Writes
+  enqueue_transaction(1'b1, 1'b1, ADDR_DATA_CR, tb_test_data_size, 1'b0);
+
+
+  // Run the write transactions via the model
+  execute_transactions(1);
+
+  // Check the DUT outputs
+  tb_expected_data_read  = 1'b0;
+  tb_expected_bit_period = tb_test_bit_period;
+  tb_expected_data_size  = 4'd5;
+
+  check_outputs("after attempting to configure a 1000-cycle bit period");
+
+  // Enqueue the CR Reads
+  enqueue_transaction(1'b1, 1'b0, ADDR_DATA_CR, tb_test_data_size, 1'b0);
+
+  // Run the read transactions via the model
+  execute_transactions(2);
+
+  /////////////////////////////////////////////////////////////////////////////////
+  ///
+  ///   Test case: PLSVERR testcase for reading from UART
+  ///
+  ///////////////////////////////////////////////////////////////////////////////
+  // Update Navigation Info
+  tb_test_case     = "Reading Pslverr test case";
+  tb_test_case_num = tb_test_case_num + 1;
+
+  reset_dut();
+
+  tb_data_ready = 1'b0;
+  enqueue_transaction(1'b1,1'b0,3'd5,{7'd0,tb_data_ready},1'b1);
+
+  //Run the read transaction
+  execute_transactions(1);
+
+  /////////////////////////////////////////////////////////////////////////////////
+  ///
+  ///   Test case: PLSVERR testcase for writing to UART
+  ///
+  ///////////////////////////////////////////////////////////////////////////////
+  // Update Navigation Info
+  tb_test_case     = "Writing Pslverr test case";
+  tb_test_case_num = tb_test_case_num + 1;
+
+  reset_dut();
+
+  tb_data_ready = 1'b0;
+  enqueue_transaction(1'b1,1'b1,3'd1,{7'd0,tb_data_ready},1'b1);
+
+  //Run the read transaction
+  execute_transactions(1);
+
 
 end
 
