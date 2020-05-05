@@ -44,11 +44,13 @@ Orient: R0
 Pad: U6 N
 
 Orient: R90
+Pad: U1 W
+Orient: R90
+Pad: U2 W
+Orient: R90
 Pad: FW1 W PADNC
 Orient: R90
 Pad: FW2 W PADNC
-Orient: R90
-Pad: U1 W
 Orient: R90
 Pad: FW3 W PADNC
 Orient: R90
@@ -57,8 +59,6 @@ Orient: R90
 Pad: G1 W PADGND
 Orient: R90
 Pad: FW4 W PADNC
-Orient: R90
-Pad: U2 W
 Orient: R90
 Pad: FW5 W PADNC
 Orient: R90
@@ -86,12 +86,15 @@ Pad: U14 S
 Orient: R180
 Pad: U15 S
 
+
 Orient: R270
-Pad: FE1 E PADNC
+Pad: U7 E
 Orient: R270
 Pad: U3 E
 Orient: R270
 Pad: U4 E
+Orient: R270
+Pad: FE1 E PADNC
 Orient: R270
 Pad: FE2 E PADNC
 Orient: R270
@@ -100,8 +103,6 @@ Orient: R270
 Pad: G3 E PADGND
 Orient: R270
 Pad: FE3 E PADNC
-Orient: R270
-Pad: U7 E
 Orient: R270
 Pad: U16 E
 Orient: R270

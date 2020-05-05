@@ -6,7 +6,7 @@
 // Version:     1.0  Initial Design Entry
 // Description: Flex Counter Design
 
-module flex_counter #(parameter NUM_CNT_BITS = 4)(input wire clk, input wire n_rst, input wire clear, input wire count_enable, input wire [NUM_CNT_BITS-1:0] rollover_val, output reg[NUM_CNT_BITS-1:0] count_out, output reg rollover_flag);
+module flex_counter #(parameter NUM_CNT_BITS = 10)(input wire clk, input wire n_rst, input wire clear, input wire count_enable, input wire [NUM_CNT_BITS-1:0] rollover_val, output reg[NUM_CNT_BITS-1:0] count_out, output reg rollover_flag);
 
 reg [NUM_CNT_BITS-1:0] next_count;
 reg next_rollover_flag;

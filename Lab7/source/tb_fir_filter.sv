@@ -218,7 +218,6 @@ module tb_fir_filter();
 	end
 	endtask
 	
-	
 	// Task for a test case
 	task test_stream;
 		input testVector tv;
@@ -239,11 +238,12 @@ module tb_fir_filter();
 		load_coeff(tv.coeffs);
 		
 		// Send the stream of samples provided
-		tb_test_sample_num = 0;
-		for(s = 0; s < 4; s++)
-		begin
-			test_sample(tv.samples[s], tv.results[s], tv.errors[s], 1'b0);
-		end
+	    tb_test_sample_num = 0;
+        for(s = 0; s < 4; s++)
+	    begin
+		    test_sample(tv.samples[s], tv.results[s], tv.errors[s], 1'b0);
+    	end
+
 	end
 	endtask
 	
@@ -251,7 +251,7 @@ module tb_fir_filter();
 	initial
 	begin // TODO: Add more standard test cases here
 		// Populate the test vector array to use
-		tb_test_vectors = new[2];
+		tb_test_vectors = new[6];
 		// Test case 0
 		tb_test_vectors[0].coeffs		= {{COEFF_5}, {COEFF1}, {COEFF1}, {COEFF_5}};
 		tb_test_vectors[0].samples	= {16'd100, 16'd100, 16'd100, 16'd100};
@@ -262,7 +262,31 @@ module tb_fir_filter();
 		tb_test_vectors[1].samples	= {16'd1000, 16'd1000, 16'd100, 16'd100};
 		tb_test_vectors[1].results	= {16'd450, 16'd500, 16'd50 ,16'd50};
 		tb_test_vectors[1].errors		= {1'b0, 1'b0, 1'b0, 1'b0};
+        // Test case 2
+		tb_test_vectors[2].coeffs		= tb_test_vectors[0].coeffs;
+		tb_test_vectors[2].samples	= {16'd10000, 16'd7500, 16'd5000, 16'd2500};
+		tb_test_vectors[2].results	= {16'd1250, 16'd1250, 16'd0 ,16'd1250};
+		tb_test_vectors[2].errors		= {1'b0, 1'b0, 1'b0, 1'b0};
+        // Test case 3
+		tb_test_vectors[3].coeffs		= tb_test_vectors[0].coeffs;
+		tb_test_vectors[3].samples	= {16'd63, 16'd10524, 16'd5446, 16'd2403};
+		tb_test_vectors[3].results	= {16'd6248, 16'd2219, 16'd320 ,16'd1201};
+		tb_test_vectors[3].errors		= {1'b0, 1'b0, 1'b0, 1'b0};
+        // Test case 4
+		tb_test_vectors[4].coeffs		= tb_test_vectors[0].coeffs;
+		tb_test_vectors[4].samples	= {16'h0, 16'hFFFF, 16'h0, 16'hFFFF};
+		tb_test_vectors[4].results	= {16'd98303, 16'd98303, 16'hFFFF ,16'd32767};
+		tb_test_vectors[4].errors		= {1'b1, 1'b1, 1'b0, 1'b0};
+        // Test case 5
+		tb_test_vectors[5].coeffs		= tb_test_vectors[0].coeffs;
+		tb_test_vectors[5].samples	= {16'd63, 16'd10524, 16'd5446, 16'd2403};
+		tb_test_vectors[5].results	= {16'd6248, 16'd2219, 16'd320 ,16'd1201};
+		tb_test_vectors[5].errors		= {1'b0, 1'b0, 1'b0, 1'b0};
+
+
+
 	end
+
 	
 	// Test bench process
 	initial
@@ -280,14 +304,21 @@ module tb_fir_filter();
 		
 		// Power on reset (just inspect on waves)
 		reset_dut;
-		
+	
 		// Standard 4 sample test cases
 		for(tb_std_test_case = 0; tb_std_test_case < tb_test_vectors.size(); tb_std_test_case++)
 		begin
 			test_stream(tb_test_vectors[tb_std_test_case]);
+              
 		end
 		
-		// TODO: Add non standard test cases here
-		
-	end
+		// TODO: Add non standard test cases here        
+        @(negedge tb_clk);
+	    tb_data_ready = 1'b1;
+        @(posedge tb_clk);
+        @(negedge tb_clk);
+        tb_data_ready = 1'b0;
+        @(negedge tb_clk);
+         
+    end
 endmodule

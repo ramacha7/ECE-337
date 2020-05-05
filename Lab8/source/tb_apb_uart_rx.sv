@@ -331,15 +331,7 @@ initial begin
   tb_test_case_num = tb_test_case_num + 1;
   tb_serial_in = 1'b1;
   tb_test_stop_bit   = 1'b1;
-    
-    
-    // Send packet
-//    send_packet(tb_test_data, tb_test_stop_bit, tb_test_bit_period,4'd8);
-    
-    // Wait for 2 data periods to allow DUT to finish processing the packet
-//    #(tb_test_bit_period * 2);
-  
-  // Setup UART provided signals with 'active' values for reset check
+        
   // Reset the DUT
   reset_dut();
     

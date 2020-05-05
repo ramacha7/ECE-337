@@ -10,8 +10,8 @@ module fir_filter(input wire clk, input wire n_reset, input wire[15:0] sample_da
 
 reg overflow;
 reg cnt_up;
-reg dr;
-reg lc;
+//reg dr;
+//reg lc;
 reg clear;
 reg [2:0] op;
 reg [3:0] src1;
@@ -19,7 +19,7 @@ reg [3:0] src2;
 reg [3:0] dest;
 reg [16:0] result;
 
-controller A1 (.clk(clk), .n_rst(n_reset), .dr(dr), .lc(lc), .overflow(overflow), .cnt_up(cnt_up), .clear(clear), .modwait(modwait), .op(op), .src1(src1), .src2(src2), .dest(dest), .err(err));
+controller A1 (.clk(clk), .n_rst(n_reset), .dr(data_ready), .lc(load_coeff), .overflow(overflow), .cnt_up(cnt_up), .clear(clear), .modwait(modwait), .op(op), .src1(src1), .src2(src2), .dest(dest), .err(err));
 
 counter A2 (.clk(clk), .n_rst(n_reset), .cnt_up(cnt_up), .clear(clear), .one_k_samples(one_k_samples));
 
@@ -27,9 +27,9 @@ datapath A3 (.clk(clk), .n_reset(n_reset), .op(op), .src1(src1), .src2(src2), .d
 
 magnitude A4 (.in(result), .out(fir_out));
 
-sync_low A5 (.clk(clk), .n_rst(n_reset), .async_in(data_ready), .sync_out(dr));
+//sync_low A5 (.clk(clk), .n_rst(n_reset), .async_in(data_ready), .sync_out(dr));
 
-sync_low A6 (.clk(clk), .n_rst(n_reset), .async_in(load_coeff), .sync_out(lc));
+//sync_low A6 (.clk(clk), .n_rst(n_reset), .async_in(load_coeff), .sync_out(lc));
 
 
 endmodule

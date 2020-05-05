@@ -417,10 +417,14 @@ initial begin
   // Enqueue the write
   enqueue_transaction(1'b1, 1'b1, (ADDR_COEF_START + 6), tb_test_data, 1'b0, 1'b1);
   // Enqueue the 'check' read
+ // @(posedge tb_clk);
+  //@(posedge tb_clk);
+  execute_transactions(1);
+  //execute_transactions(1);
   enqueue_transaction(1'b1, 1'b0, (ADDR_COEF_START + 6), tb_test_data, 1'b0, 1'b1);
   
   // Run the transactions via the model
-  execute_transactions(2);
+  execute_transactions(1);
 
   // Check the DUT outputs
   tb_expected_data_ready    = 1'b0;
@@ -435,13 +439,210 @@ initial begin
 
   // Student TODO: Add more test cases here
   // Update Navigation Info
-  tb_test_case     = "Need More Tests!";
+  tb_test_case     = "Configure F3, then F2, then read F3!";
   tb_test_case_num = tb_test_case_num + 1;
   init_fir_side();
   init_expected_outs();
 
   // Reset the DUT to isolate from prior test case
   reset_dut();
+
+  // Enqueue the needed transactions (Low Coeff Address => F0, just add 2 x index)
+  tb_test_data = 16'h7000; // Fixed decimal value of 1.0
+  // Enqueue the write
+  enqueue_transaction(1'b1, 1'b1, (ADDR_COEF_START + 6), tb_test_data, 1'b0, 1'b1);
+  enqueue_transaction(1'b1, 1'b1, (ADDR_COEF_START + 4), 16'h8000, 1'b0, 1'b1);
+  // Enqueue the 'check' read
+  //@(posedge tb_clk);
+  //@(posedge tb_clk);
+
+  enqueue_transaction(1'b1, 1'b0, (ADDR_COEF_START + 6), tb_test_data, 1'b0, 1'b1);
+  
+  // Run the transactions via the model
+  execute_transactions(3);
+
+  // Check the DUT outputs
+  tb_expected_data_ready    = 1'b0;
+  tb_expected_sample        = RESET_SAMPLE;
+  tb_expected_new_coeff_set = 1'b0;
+  tb_expected_coeff         = RESET_COEFF;
+  check_outputs("after attempting to configure F3, then F2, then reading F3");
+
+  // Give some visual spacing between check and next test case start
+  #(CLK_PERIOD * 3);
+
+  //*****************************************************************************
+  // Test Case: Writing to reading from status register
+  //*****************************************************************************
+  // Update Navigation Info
+  tb_test_case     = "reading from status register";
+  tb_test_case_num = tb_test_case_num + 1;
+  init_fir_side();
+  init_expected_outs();
+
+  // Reset the DUT to isolate from prior test case
+  reset_dut();
+
+  // Enqueue the needed transactions (Low Coeff Address => F0, just add 2 x index)
+  //tb_test_data = 16'h8000; // Fixed decimal value of 1.0
+  tb_modwait = 0;
+  tb_err = 1;
+  // Enqueue the read
+  enqueue_transaction(1'b1, 1'b0, 4'd0, 16'd256, 1'b0, 1'b1);
+  
+  // Run the transactions via the model
+  execute_transactions(1);
+ 
+  // Check the DUT outputs
+  tb_expected_data_ready    = 1'b0;
+  tb_expected_sample        = RESET_SAMPLE;
+  tb_expected_new_coeff_set = 1'b0;
+  tb_expected_coeff         = RESET_COEFF;
+  check_outputs("after reading status register");
+
+  // Give some visual spacing between check and next test case start
+  #(CLK_PERIOD * 3);
+
+  //*****************************************************************************
+  // Test Case: Writing to new_coefficient_set and reading from it
+  //*****************************************************************************
+  // Update Navigation Info
+  tb_test_case     = "Checking new_coefficient_set register";
+  tb_test_case_num = tb_test_case_num + 1;
+  init_fir_side();
+  init_expected_outs();
+
+  // Reset the DUT to isolate from prior test case
+  reset_dut();
+
+  // Enqueue the needed transactions (Low Coeff Address => F0, just add 2 x index)
+  tb_test_data = 16'h0001; // Fixed decimal value of 1.0
+  // Enqueue the read
+  enqueue_transaction(1'b1, 1'b1, 4'd14, tb_test_data, 1'b0, 1'b0);
+  // Run the transactions via the model
+  execute_transactions(1);
+
+  enqueue_transaction(1'b1,1'b0,4'd14, tb_test_data,1'b0,1'b1);
+
+  execute_transactions(1);
+ 
+  // Check the DUT outputs
+  tb_expected_data_ready    = 1'b0;
+  tb_expected_sample        = RESET_SAMPLE;
+  tb_expected_new_coeff_set = 1'b1;
+  tb_expected_coeff         = RESET_COEFF;
+  check_outputs("after reading from new_coefficient_set register");
+
+  // Give some visual spacing between check and next test case start
+  #(CLK_PERIOD * 3);
+
+
+  //*****************************************************************************
+  // Test Case: Writing to all coefficient registers and then reading it
+  //*****************************************************************************
+  // Update Navigation Info
+  tb_test_case     = "Checking coefficient registers";
+  tb_test_case_num = tb_test_case_num + 1;
+  init_fir_side();
+  init_expected_outs();
+
+  // Reset the DUT to isolate from prior test case
+  reset_dut();
+
+  // Enqueue the needed transactions (Low Coeff Address => F0, just add 2 x index)
+  tb_test_data = 16'h1000; // Fixed decimal value of 1.0
+  // Enqueue the read
+  enqueue_transaction(1'b1, 1'b1, 4'd6, 16'h1000, 1'b0, 1'b1);
+  enqueue_transaction(1'b1, 1'b1, 4'd8, 16'h2000, 1'b0, 1'b1);
+  enqueue_transaction(1'b1, 1'b1, 4'd10, 16'h4000, 1'b0, 1'b1);
+  enqueue_transaction(1'b1, 1'b1, 4'd12, 16'h8000, 1'b0, 1'b1);
+  // Run the transactions via the model
+  execute_transactions(4);
+
+  enqueue_transaction(1'b1,1'b0,4'd8, 16'h2000,1'b0,1'b1);
+  enqueue_transaction(1'b1, 1'b0, 4'd10, 16'h4000, 1'b0, 1'b1);
+  enqueue_transaction(1'b1, 1'b0, 4'd6, 16'h1000, 1'b0, 1'b1);
+  enqueue_transaction(1'b1, 1'b0, 4'd12, 16'h8000, 1'b0, 1'b1);
+
+  execute_transactions(4);
+ 
+  // Check the DUT outputs
+  tb_expected_data_ready    = 1'b0;
+  tb_expected_sample        = RESET_SAMPLE;
+  tb_expected_new_coeff_set = 1'b0;
+  tb_expected_coeff         = 16'h1000;
+  check_outputs("Checking all coefficients registers");
+
+  // Give some visual spacing between check and next test case start
+  #(CLK_PERIOD * 3);
+
+  //*****************************************************************************
+  // Test Case: Writing to all coefficient registers and then reading it with varying hsize
+  //*****************************************************************************
+  // Update Navigation Info
+  tb_test_case     = "Checking coefficient registers with varying hsize";
+  tb_test_case_num = tb_test_case_num + 1;
+  init_fir_side();
+  init_expected_outs();
+
+  // Reset the DUT to isolate from prior test case
+  reset_dut();
+
+  // Enqueue the needed transactions (Low Coeff Address => F0, just add 2 x index)
+  tb_test_data = 16'h1000; // Fixed decimal value of 1.0
+  // Enqueue the read
+  enqueue_transaction(1'b1, 1'b1, 4'd6, 16'hFFFF, 1'b0, 1'b0);
+  enqueue_transaction(1'b1, 1'b1, 4'd9, 16'h2000, 1'b0, 1'b1);
+  enqueue_transaction(1'b1, 1'b1, 4'd10, 16'h00FF, 1'b0, 1'b0);
+  enqueue_transaction(1'b1, 1'b1, 4'd13, 16'hFFFF, 1'b0, 1'b0);
+  // Run the transactions via the model
+  execute_transactions(4);
+
+  enqueue_transaction(1'b1,1'b0,4'd7, 16'h00FF,1'b0,1'b1);
+  enqueue_transaction(1'b1, 1'b0, 4'd8, 16'h2000, 1'b0, 1'b1);
+  enqueue_transaction(1'b1, 1'b0, 4'd11, 16'h0000, 1'b0, 1'b0);
+  enqueue_transaction(1'b1, 1'b0, 4'd12, 16'hFF00, 1'b0, 1'b1);
+
+  execute_transactions(4);
+ 
+  // Check the DUT outputs
+  tb_expected_data_ready    = 1'b0;
+  tb_expected_sample        = RESET_SAMPLE;
+  tb_expected_new_coeff_set = 1'b0;
+  tb_expected_coeff         = 16'h00FF;
+  check_outputs("after reading and writing registers with varying hsize");
+
+  // Give some visual spacing between check and next test case start
+  #(CLK_PERIOD * 3);
+
+  //*****************************************************************************
+  // Test Case: Write to a read only register (hresp = 1)
+  //*****************************************************************************
+  // Update Navigation Info
+  tb_test_case     = "Hresp error test case";
+  tb_test_case_num = tb_test_case_num + 1;
+  init_fir_side();
+  init_expected_outs();
+  
+  // Reset the DUT to isolate from prior test case
+  reset_dut();
+
+  tb_test_data = 16'd1000; 
+  enqueue_transaction(1'b1, 1'b1, 4'd3, tb_test_data, 1'b1, 1'b1);
+  
+  // Run the transactions via the model
+  execute_transactions(1);
+
+  // Check the DUT outputs
+  tb_expected_data_ready    = 1'b0;
+  tb_expected_sample        = 16'd0;
+  tb_expected_new_coeff_set = 1'b0;
+  tb_expected_coeff         = RESET_COEFF;
+  check_outputs("after Writing to a read only register");
+
+  // Give some visual spacing between check and next test case start
+  #(CLK_PERIOD * 3);
+
 
 end
 
